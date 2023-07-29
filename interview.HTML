@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT</title>
+    <style>
+      .main{
+         width:50%;
+         /* height:500px; */
+         margin: auto;
+         margin-top: 50px;
+         /* border:1px solid gray; */
+      }
+      #answer{
+         width:60%;
+         margin: auto;
+         margin-top: 20px;
+         font-size: 15px;
+         padding: 10px;
+         display: block;
+         border: 1px solid black;
+         border-radius: 5px;
+         background-color: rgb(201, 196, 196);
+      }
+      button{
+         width: 20%;
+         display: block;
+         margin: auto;
+         font-size: 15px;
+         padding: 10px;
+         border-radius: 10px;
+         background-color: skyblue;
+         margin-top: 20px;
+      }
+      .main_t{
+         width:50%;
+         height:auto;
+         margin: auto;
+         color: #000;
+         margin-top: 10px;
+         border:1px solid gray;
+         text-align: center;
+      }
+      #response{
+        width:50%;
+         height:auto;
+         margin: auto;
+         text-align: left;
+         color: #000;
+         margin-top: 10px;
+         border:1px solid gray;
+         text-align: center;
+      }
+    </style>
+</head>
+<body>
+ <div class="main">
+    <button onclick="Onstart()">Start The Interview</button>
+ </div>
+ <div class="main_t">
+    <div id="child"></div>
+    <h2 id="question"></h2>
+    <input type="text" placeholder="Provide your answer here" id="answer">
+    <button onclick="OnAnswerSubmit()">Submit</button>
+ </div>
+ <div id="response">
+    <!-- <h3 id="res_q"></h3>
+    <pi id="res_userAns"></p>
+    <p id="res_expAns"></p>
+    <h3 id="score"></h3>
+    <h3 id="feedback"></h3> -->
+ </div> 
+</body>
+</html>
+<script>
+ const ansEl=document.getElementById("answer")
+const questionEl=document.getElementById("question")
+const res_q_el=document.getElementById("res_q")
+const res_userAns_el=document.getElementById("res_userAns")
+const res_expAns_el=document.getElementById("res_expAns")
+const score_el=document.getElementById("score")
+const feedback_el=document.getElementById("feedback")
+const res=document.getElementById("child")
+   function Onstart(){
+    //   event.preventDefault();
+    //   console.log(payload)
+      fetch("http://localhost:4500/api/get/Question",{
+         method:"GET",
+         headers:{
+            "Content-Type":"application/json"
+         }
+      })
+      .then((res)=>res.json())
+      .then((data)=>{
+         //console.log(data.question)
+         questionEl.innerText=data.question;
+      })
+      .catch((error)=>{
+         console.log(error)
+      })
+   }
+
+   function OnAnswerSubmit(){
+      event.preventDefault();
+      const payload={
+        userAnswer:ansEl.value
+      }
+      console.log(payload)
+      fetch("http://localhost:4500/api/trial",{
+         method:"POST",
+         headers:{
+            "Content-Type":"application/json"
+         },
+         body:JSON.stringify(payload)
+      })
+      .then((res)=>res.json())
+      .then((data)=>{
+         console.log(data)
+         // Get the DOM element where you want to display the response
+        const responseElement = document.getElementById("response");
+
+// Construct the HTML content to display the response data
+const htmlContent = `
+    <h3>Question: ${data.Question}</h3>
+    <p>User Answer: ${data.UserAnswer}</p>
+    <p>Required Answer: ${data.RequiredAns}</p>
+    <h3>Score: ${data.Score}</h3>
+    <h3>Feedback: ${data.Feedback}</h3>
+`;
+
+// Update the content of the responseElement with the HTML content
+responseElement.innerHTML = htmlContent;
+      })
+      .catch((error)=>{
+         console.log(error)
+      })
+   }
+</script>
+<!-- Question: interviewQuestion.Question,
+            UserAnswer: userAnswer,
+            RequiredAns: response,
+            Score: score.score,
+            Feedback: score.feedback, -->

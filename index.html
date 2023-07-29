@@ -60,10 +60,10 @@
    function Onsubmit(){
       event.preventDefault();
       const payload={
-         message:inputEl.value
+         question:inputEl.value
       }
       console.log(payload)
-      fetch("http://localhost:4500/chat",{
+      fetch("http://localhost:4500/api/chat/new",{
          method:"POST",
          headers:{
             "Content-Type":"application/json"
